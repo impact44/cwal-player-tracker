@@ -64,9 +64,7 @@ chrome.runtime.onInstalled.addListener(() => {
       {
         "aurora_id": 18372718,
         "battle_tag": "김택용"
-      }
-    ],
-    "Bisu2": [
+      },
       {
         "aurora_id": 1409696313,
         "battle_tag": "lIlIlIlIIIll"

@@ -68,3 +68,83 @@ export function removeAkaFromStorage(auroraId: number): void {
     }
   });
 }
+
+export async function exportAkaList(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(['aka_list'], (result) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+        return;
+      }
+
+      const akaList = result.aka_list;
+
+      if (!akaList) {
+        console.warn('❌ aka_list not found in storage.');
+        return;
+      }
+
+      const jsonStr = JSON.stringify(akaList, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'aka_list.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+      resolve();
+    });
+  });
+}
+
+export async function importAkaList(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (!file) {
+        reject('No file selected');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const text = event.target?.result as string;
+          const parsed = JSON.parse(text);
+
+          // Optional: validate structure
+          if (typeof parsed !== 'object' || parsed === null) {
+            throw new Error('Invalid JSON structure');
+          }
+
+          chrome.storage.local.set({ aka_list: parsed }, () => {
+            if (chrome.runtime.lastError) {
+              reject(chrome.runtime.lastError);
+              return;
+            }
+            console.log('[EXT] List imported successfully');
+            resolve();
+          });
+        } catch (err) {
+          reject(err);
+        }
+      };
+
+      reader.onerror = () => {
+        reject(reader.error);
+      };
+
+      reader.readAsText(file);
+    };
+
+    input.click();
+  });
+}

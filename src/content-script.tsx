@@ -1,7 +1,12 @@
 import { SUPABASE_HEADERS } from "./utils/supabase";
 import { injectAkaButtons } from "./utils/inject-buttons";
-import { addAkaToStorage, removeAkaFromStorage } from "./utils/storage-helpers";
+import { addAkaToStorage, removeAkaFromStorage, exportAkaList, importAkaList } from "./utils/storage-helpers";
 import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from "./utils/inject-tags";
+
+
+// Expose functions to the global window object for debugging
+(window as any).exportAkaList = exportAkaList;
+(window as any).importAkaList = importAkaList;
 
 (() => {
   if ((window as any).hasRunProTagScript) return;
