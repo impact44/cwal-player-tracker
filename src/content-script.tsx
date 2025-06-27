@@ -1,4 +1,7 @@
 import { SUPABASE_HEADERS } from "./utils/supabase";
+import { injectAkaButtons } from "./utils/inject-buttons";
+import { addAkaToStorage, removeAkaFromStorage } from "./utils/storage-helpers";
+import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from "./utils/inject-tags";
 
 (() => {
   if ((window as any).hasRunProTagScript) return;
@@ -7,10 +10,10 @@ import { SUPABASE_HEADERS } from "./utils/supabase";
   const injectedMatchIds = new Set<string>();
   let PRO_MAP: Record<
     string,
-    { battle_tag: string; aurora_id: string }
+    { battle_tag: string; aurora_id: number }
   > | null = null;
   let cachedBattleTag: string | null = null;
-  let cachedAuroraId: string | null = null;
+  let cachedAuroraId: number | null = null;
   let alreadyInjected = false;
   let lastUrl: string = location.href;
   let matchObserver: MutationObserver | null = null;
@@ -54,57 +57,36 @@ import { SUPABASE_HEADERS } from "./utils/supabase";
   async function fetchAuroraId(
     alias: string,
     gateway: string
-  ): Promise<string | null> {
+  ): Promise<number | null> {
     const encodedAlias = encodeURIComponent(alias);
     const url = `https://xmploueumzkrdvapbyfs.supabase.co/rest/v1/player_profile_view?select=*&alias=eq.${encodedAlias}&gateway=eq.${gateway}`;
     try {
       const res = await fetch(url, { headers: SUPABASE_HEADERS });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      return data?.[0]?.battlenet_account?.toString() || null;
+      const id = data?.[0]?.battlenet_account;
+      return id !== undefined && id !== null ? Number(id) : null;
     } catch (err) {
       console.error("[EXT] ❌ Failed to fetch aurora_id", err);
       return null;
     }
   }
 
-  function tryMatch(battleTag: string, auroraId: string): boolean {
+  function tryMatch(battleTag: string, auroraId: number): boolean {
+    removeInjectedProTag(); // Always clear the tag first
+
     if (!PRO_MAP) return false;
-    for (const [proName, info] of Object.entries(PRO_MAP)) {
-      if (
-        info.battle_tag === battleTag ||
-        parseInt(info.aurora_id) === parseInt(auroraId)
-      ) {
-        injectProTag(proName);
+
+    for (const [aka, info] of Object.entries(PRO_MAP)) {
+      const storedAuroraId = Number(info.aurora_id);
+
+      if (info.battle_tag === battleTag || storedAuroraId === auroraId) {
+        injectProTag(aka); // Inject if match found
         return true;
       }
     }
+
     return false;
-  }
-
-  function injectProTag(proName: string): void {
-    const container = document.querySelector(
-      "div.flex.flex-row.w-full.gap-4.items-end"
-    );
-    const battleTagElement = container?.querySelector(
-      "h3.font-bold.leading-\\[1em\\].items-end.trim.font-mono"
-    );
-    if (!container || !battleTagElement) {
-      console.warn("[EXT] ⚠️ Could not find injection point.");
-      return;
-    }
-
-    const existing = container.querySelector("[data-pro-tag]");
-    if (existing) existing.remove();
-
-    const tag = document.createElement("h3");
-    tag.className = "font-bold leading-[1em] items-end trim font-mono";
-    tag.setAttribute("data-pro-tag", "true");
-    tag.textContent = `Pro Player: ${proName}`;
-    battleTagElement.parentNode?.insertBefore(
-      tag,
-      battleTagElement.nextSibling
-    );
   }
 
   function waitForElement(
@@ -124,87 +106,6 @@ import { SUPABASE_HEADERS } from "./utils/supabase";
       };
       check();
     });
-  }
-
-  async function injectProTagsInMatchHistory(
-    auroraId: string,
-    gateway: string,
-    alias: string
-  ): Promise<void> {
-    console.log("[EXT] 🧪 injectProTagsInMatchHistory triggered", {
-      auroraId,
-      gateway,
-      alias,
-    });
-
-    const rows = document.querySelectorAll(
-      "div.flex.flex-row.gap-2.w-full.items-center"
-    );
-
-    const total = rows.length;
-    if (total === 0) {
-      return;
-    }
-
-    const chunkSize = 20;
-
-    for (let offset = 0; offset < total; offset += chunkSize) {
-      if (processedOffsets.has(offset)) {
-        continue;
-      }
-      processedOffsets.add(offset);
-
-      const rowsChunk = Array.from(rows).slice(offset, offset + chunkSize);
-
-      const url = `https://xmploueumzkrdvapbyfs.supabase.co/rest/v1/player_matches?select=*&order=timestamp.desc&offset=${offset}&limit=${chunkSize}&aurora_id=eq.${auroraId}&gateway=eq.${gateway}&alias=eq.${encodeURIComponent(
-        alias
-      )}`;
-
-      try {
-        const res = await fetch(url, { headers: SUPABASE_HEADERS });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-
-        console.log(
-          `[EXT] 📦 Fetched ${data.length} matches from Supabase (offset ${offset})`
-        );
-
-        rowsChunk.forEach((row, i) => {
-          const match = data[i];
-          if (!match || injectedMatchIds.has(match.id)) return;
-
-          for (const [proName, { aurora_id }] of Object.entries(
-            PRO_MAP ?? {}
-          )) {
-            const proId = parseInt(aurora_id);
-            if (proId === match.opponent_aurora_id) {
-              const link = row.querySelector("a[href*='/players/gateway/']");
-              if (!link) continue;
-              if (row.querySelector("[data-pro-tag]")) continue;
-
-              const opponentColorSpan = link.querySelector("span.badge");
-              const textColorClass = Array.from(
-                opponentColorSpan?.classList ?? []
-              ).find((cls) => cls.startsWith("text-") && cls.endsWith("-500"));
-
-              const tag = document.createElement("div");
-              tag.textContent = `Opponent: ${proName}`;
-              tag.className = `text-xs font-bold ml-2 ${
-                textColorClass ?? "text-yellow-500"
-              }`;
-              tag.setAttribute("data-pro-tag", "true");
-
-              link.insertAdjacentElement("afterend", tag);
-              injectedMatchIds.add(match.id);
-              break;
-            }
-          }
-        });
-      } catch (err) {
-        console.error("[EXT] ❌ Failed to inject match history tags:", err);
-        return;
-      }
-    }
   }
 
   function observeAliasWipe(): void {
@@ -240,7 +141,7 @@ import { SUPABASE_HEADERS } from "./utils/supabase";
   }
 
   function observeMatchHistoryUpdates(
-    auroraId: string,
+    auroraId: number,
     gateway: string,
     alias: string
   ): void {
@@ -264,7 +165,15 @@ import { SUPABASE_HEADERS } from "./utils/supabase";
         );
         if (!hasMeaningfulChange) return;
 
-        injectProTagsInMatchHistory(auroraId, gateway, alias);
+        injectProTagsInMatchHistory(
+          auroraId,
+          gateway,
+          alias,
+          processedOffsets,
+          injectedMatchIds,
+          PRO_MAP!,
+          SUPABASE_HEADERS
+        );
       }, 100)
     );
 
@@ -317,11 +226,14 @@ import { SUPABASE_HEADERS } from "./utils/supabase";
     if (!parsed) return;
 
     const { alias, gateway } = parsed;
-    const auroraId = await fetchAuroraId(alias, gateway);
+    const auroraId: number | null = await fetchAuroraId(alias, gateway);
     if (!auroraId) return;
     cachedAuroraId = auroraId;
 
-    const profileContainer = await waitForElement("div.flex.flex-col", 5000);
+    const profileContainer = await waitForElement(
+      "div.flex.flex-row.justify-end.form-control.w-full.gap-2",
+      5000
+    );
     if (!profileContainer) {
       console.warn("[EXT] ⚠️ Profile container not found within timeout");
       return;
@@ -338,11 +250,42 @@ import { SUPABASE_HEADERS } from "./utils/supabase";
 
     cachedBattleTag =
       raw.startsWith("/") && raw.endsWith("/") ? raw.slice(1, -1).trim() : raw;
-    tryMatch(cachedBattleTag, auroraId);
-    observeAliasWipe(); // Watch for tag removal
 
-    injectProTagsInMatchHistory(auroraId, gateway, alias);
+    // 🆕 Fetch the latest stored list and run tryMatch
+    chrome.storage.local.get("pro_map", (result) => {
+      const latestMap = result.pro_map ?? {};
+      PRO_MAP = latestMap;
+      tryMatch(cachedBattleTag!, auroraId);
+    });
+
+    observeAliasWipe();
+
+    injectProTagsInMatchHistory(
+      auroraId,
+      gateway,
+      alias,
+      processedOffsets,
+      injectedMatchIds,
+      PRO_MAP!,
+      SUPABASE_HEADERS
+    );
     observeMatchHistoryUpdates(cachedAuroraId, gateway, alias);
+
+    if (!alreadyInjected && cachedBattleTag) {
+      alreadyInjected = true;
+
+      injectAkaButtons(
+        profileContainer as HTMLElement,
+        (aka: string) => {
+          addAkaToStorage(aka, auroraId, cachedBattleTag!);
+          resetAndRerun(); // rerun after adding
+        },
+        () => {
+          removeAkaFromStorage(auroraId);
+          resetAndRerun(); // rerun after removing
+        }
+      );
+    }
   }
 
   chrome.storage.local.get("pro_map", (result) => {
@@ -353,7 +296,7 @@ import { SUPABASE_HEADERS } from "./utils/supabase";
 
     PRO_MAP = result.pro_map;
     console.log(
-      "[EXT] ✅ Pro map loaded:",
+      "[EXT] ✅ Alias list loaded:",
       Object.keys(PRO_MAP ?? {}).length,
       "entries"
     );
