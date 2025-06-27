@@ -8,10 +8,7 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
   (window as any).hasRunProTagScript = true;
 
   const injectedMatchIds = new Set<string>();
-  let PRO_MAP: Record<
-    string,
-    { battle_tag: string; aurora_id: number }
-  > | null = null;
+  let AKA_MAP: Record<string, { battle_tag: string; aurora_id: number }[]> | null = null;
   let cachedBattleTag: string | null = null;
   let cachedAuroraId: number | null = null;
   let alreadyInjected = false;
@@ -75,14 +72,15 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
   function tryMatch(battleTag: string, auroraId: number): boolean {
     removeInjectedProTag(); // Always clear the tag first
 
-    if (!PRO_MAP) return false;
+    if (!AKA_MAP) return false;
 
-    for (const [aka, info] of Object.entries(PRO_MAP)) {
-      const storedAuroraId = Number(info.aurora_id);
-
-      if (info.battle_tag === battleTag || storedAuroraId === auroraId) {
-        injectProTag(aka); // Inject if match found
-        return true;
+    for (const [aka, accounts] of Object.entries(AKA_MAP)) {
+      for (const account of accounts) {
+        const storedAuroraId = Number(account.aurora_id);
+        if (account.battle_tag === battleTag || storedAuroraId === auroraId) {
+          injectProTag(aka);
+          return true;
+        }
       }
     }
 
@@ -128,7 +126,7 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
 
       if (
         !exists &&
-        PRO_MAP &&
+        AKA_MAP &&
         cachedBattleTag &&
         cachedAuroraId &&
         currentTag === cachedBattleTag
@@ -171,7 +169,7 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
           alias,
           processedOffsets,
           injectedMatchIds,
-          PRO_MAP!,
+          AKA_MAP!,
           SUPABASE_HEADERS
         );
       }, 100)
@@ -252,11 +250,12 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
       raw.startsWith("/") && raw.endsWith("/") ? raw.slice(1, -1).trim() : raw;
 
     // 🆕 Fetch the latest stored list and run tryMatch
-    chrome.storage.local.get("pro_map", (result) => {
-      const latestMap = result.pro_map ?? {};
-      PRO_MAP = latestMap;
+    chrome.storage.local.get("aka_list", (result) => {
+      const latestMap = result.aka_list ?? {};
+      AKA_MAP = latestMap;
       tryMatch(cachedBattleTag!, auroraId);
     });
+
 
     observeAliasWipe();
 
@@ -266,7 +265,7 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
       alias,
       processedOffsets,
       injectedMatchIds,
-      PRO_MAP!,
+      AKA_MAP!,
       SUPABASE_HEADERS
     );
     observeMatchHistoryUpdates(cachedAuroraId, gateway, alias);
@@ -288,16 +287,16 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
     }
   }
 
-  chrome.storage.local.get("pro_map", (result) => {
-    if (!result.pro_map) {
-      console.error("[EXT] ❌ pro_map not found in chrome.storage.local");
+  chrome.storage.local.get("aka_list", (result) => {
+    if (!result.aka_list) {
+      console.error("[EXT] ❌ aka_list not found in chrome.storage.local");
       return;
     }
 
-    PRO_MAP = result.pro_map;
+    AKA_MAP = result.aka_list;
     console.log(
-      "[EXT] ✅ Alias list loaded:",
-      Object.keys(PRO_MAP ?? {}).length,
+      "[EXT] Alias list loaded:",
+      Object.keys(AKA_MAP ?? {}).length,
       "entries"
     );
 

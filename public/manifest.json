@@ -3,22 +3,34 @@
   "name": "CWAL Pro Player Marker",
   "version": "1.01",
   "description": "Marks known StarCraft pros on cwal.gg player profiles.",
-  "permissions": ["storage"],
-  "host_permissions": ["https://cwal.gg/*"],
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://cwal.gg/*"
+  ],
   "background": {
     "service_worker": "bg-inject.js"
   },
   "content_scripts": [
     {
-      "matches": ["https://cwal.gg/*"],
-      "js": ["content-script.js"],
+      "matches": [
+        "https://cwal.gg/*"
+      ],
+      "js": [
+        "content-script.js"
+      ],
       "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["icons/edit.png"],
-      "matches": ["https://cwal.gg/*"]
+      "resources": [
+        "icons/edit.png"
+      ],
+      "matches": [
+        "https://cwal.gg/*"
+      ]
     }
   ],
   "action": {
