@@ -1,0 +1,55 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 590px;
+    height: 480px;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-box {
+    background-color: #1e1e1e;
+    padding: 24px 20px;
+    border-radius: 10px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 0 12px #000;
+    border: 1px solid #333;
+}
+
+.modal-box p {
+    font-size: 15px;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.confirm-yes,
+.confirm-no {
+    flex: 1;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    color: white;
+}
+
+.confirm-yes {
+    background-color: #a22;
+    cursor: not-allowed;
+}
+
+.confirm-no {
+    background-color: #444;
+    cursor: pointer;
+}

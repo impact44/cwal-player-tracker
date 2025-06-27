@@ -56,6 +56,13 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
     processedOffsets.clear();
   }
 
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    if (message.type === 'RELOAD_AKA_LIST') {
+      resetAndRerun()
+      sendResponse({ success: true })
+    }
+  })
+
   async function fetchAuroraId(
     alias: string,
     gateway: string
@@ -151,7 +158,7 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
     const container = document.querySelector("div.flex.flex-col");
     if (!container) return;
 
-    // 🔄 Disconnect any previously attached observer
+    // Disconnect any previously attached observer
     if (matchObserver) {
       matchObserver.disconnect();
       matchObserver = null;
@@ -224,6 +231,7 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
 
   async function resetAndRerun(): Promise<void> {
     resetSessionState();
+    matchObserver?.disconnect(); // Clean up old observer
 
     const parsed = extractAliasAndGatewayFromUrl(location.href);
     if (!parsed) return;
@@ -254,26 +262,24 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
     cachedBattleTag =
       raw.startsWith("/") && raw.endsWith("/") ? raw.slice(1, -1).trim() : raw;
 
-    // 🆕 Fetch the latest stored list and run tryMatch
+    // 🔁 Always refresh the latest list before injecting anything
     chrome.storage.local.get("aka_list", (result) => {
-      const latestMap = result.aka_list ?? {};
-      AKA_MAP = latestMap;
+      AKA_MAP = result.aka_list ?? {};
+
       tryMatch(cachedBattleTag!, auroraId);
+      observeAliasWipe();
+
+      injectProTagsInMatchHistory(
+        auroraId,
+        gateway,
+        alias,
+        processedOffsets,
+        injectedMatchIds,
+        AKA_MAP!,
+        SUPABASE_HEADERS
+      );
+      observeMatchHistoryUpdates(auroraId, gateway, alias);
     });
-
-
-    observeAliasWipe();
-
-    injectProTagsInMatchHistory(
-      auroraId,
-      gateway,
-      alias,
-      processedOffsets,
-      injectedMatchIds,
-      AKA_MAP!,
-      SUPABASE_HEADERS
-    );
-    observeMatchHistoryUpdates(cachedAuroraId, gateway, alias);
 
     if (!alreadyInjected && cachedBattleTag) {
       alreadyInjected = true;

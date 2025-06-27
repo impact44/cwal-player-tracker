@@ -1,0 +1,132 @@
+.view-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 100%;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* Alias Count */
+.list-meta {
+    font-size: 13px;
+    color: #ccc;
+    margin-bottom: 4px;
+    padding-left: 2px;
+}
+
+/* Column Headers */
+.alias-list-header {
+    display: flex;
+    font-size: 12px;
+    color: #888;
+    padding: 4px 12px;
+    border-bottom: 1px solid #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.alias-list-header .alias-col,
+.account-col.alias {
+    flex: 1;
+    font-weight: 600;
+    color: #fff;
+}
+
+.alias-list-header .btag-col,
+.account-col.btag {
+    flex: 1;
+    text-align: left;
+    color: #ccc;
+    font-weight: 500;
+}
+
+.alias-list-header .id-col,
+.account-col.aid {
+    flex: 1;
+    text-align: right;
+    color: #888;
+    font-weight: 400;
+}
+
+.alias-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.alias-block {
+    background-color: #2a2a2a;
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.alias-name {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+}
+
+.account-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.account-list li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #ccc;
+    padding: 4px 12px;
+    border-bottom: 1px solid #333;
+}
+
+.account-list li:last-child {
+    border-bottom: none;
+}
+
+.account-col {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.grid-row {
+    display: grid;
+    grid-template-columns: 35% 40% 25%;
+    padding: 4px 0;
+    font-size: 13px;
+    color: #ccc;
+    border-bottom: 1px solid #333;
+    align-items: center;
+}
+
+.grid-row:last-child {
+    border-bottom: none;
+}
+
+.alias-col {
+    font-weight: 600;
+    color: #fff;
+}
+
+.btag-col {
+    font-weight: 500;
+    color: #ccc;
+}
+
+.id-col {
+    color: #888;
+}
+
+.header {
+    font-size: 12px;
+    color: #aaa;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-bottom: 1px solid #444;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+}

@@ -1,0 +1,225 @@
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* === Core layout === */
+body {
+  margin: 0;
+  padding: 0;
+  background: #121212;
+  color: white;
+  font-family: system-ui, sans-serif;
+  width: 590px;
+  height: 480px;
+  overflow: hidden;
+}
+
+#root {
+  width: 590px;
+  height: 480px;
+}
+
+/* --- Layout --- */
+.app {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: #121212;
+  color: #fff;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  width: 180px;
+  background-color: #1e1e1e;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.app-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+/* --- Section Titles --- */
+.section-label {
+  font-size: 12px;
+  color: #aaa;
+  margin: 10px 0 4px;
+  text-transform: uppercase;
+  padding-left: 10px;
+}
+
+/* --- Sidebar Items --- */
+.menu-item {
+  background: none;
+  border: none;
+  padding: 8px 10px;
+  text-align: left;
+  color: #ddd;
+  width: 100%;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s;
+  margin-top: 4px;
+}
+
+.menu-item:hover {
+  background-color: #2c2c2c;
+}
+
+.menu-item.active {
+  background-color: #3a3a3a;
+  color: #fff;
+}
+
+/* --- Right Panel --- */
+.main-panel {
+  flex: 1;
+  background-color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  min-height: 0;
+}
+
+.panel-header {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.panel-content {
+  flex: 1;
+  background-color: #222;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-y: auto;
+}
+
+.import-export-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel-section {
+  background-color: #2a2a2a;
+  padding: 12px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.panel-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ddd;
+}
+
+.action-button {
+  background-color: #333;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.action-button.warn {
+  background-color: #822;
+}
+
+.action-button:hover {
+  background-color: #444;
+}
+
+.status-banner {
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  border-left: 4px solid #00cc66;
+  color: #8f8;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.sidebar-icons {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-around;
+  padding-top: 12px;
+  border-top: 1px solid #333;
+}
+
+.sidebar-icons a {
+  color: #aaa;
+  transition: color 0.2s;
+}
+
+.sidebar-icons a:hover {
+  color: #fff;
+}
+
+.panel-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+  background-color: #444;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
