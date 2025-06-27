@@ -9,9 +9,6 @@
   "host_permissions": [
     "https://cwal.gg/*"
   ],
-  "background": {
-    "service_worker": "bg-inject.js"
-  },
   "content_scripts": [
     {
       "matches": [

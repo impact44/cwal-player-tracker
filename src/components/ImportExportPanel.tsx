@@ -10,9 +10,11 @@ const ImportExportPanel: React.FC<Props> = ({ status, setStatus }) => {
 
     const notifyContentScript = () => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            const tabId = tabs[0]?.id
-            if (tabId !== undefined) {
-                chrome.tabs.sendMessage(tabId, { type: 'RELOAD_AKA_LIST' })
+            const tab = tabs[0]
+            if (tab?.id !== undefined && tab.url?.includes("cwal.gg/players")) {
+                chrome.tabs.sendMessage(tab.id, { type: 'RELOAD_AKA_LIST' })
+            } else {
+                // console.warn("No eligible tab to send RELOAD_AKA_LIST.")
             }
         })
     }
@@ -57,6 +59,23 @@ const ImportExportPanel: React.FC<Props> = ({ status, setStatus }) => {
         }
 
         reader.readAsText(file)
+    }
+
+    const handleImportDefault = async () => {
+        try {
+            const res = await fetch('/default_list.json')
+            if (!res.ok) throw new Error('Failed to fetch default list')
+            const data = await res.json()
+
+            chrome.storage.local.set({ aka_list: data }, () => {
+                setStatus('Default list imported.')
+                notifyContentScript()
+            })
+        } catch (err) {
+            setStatus('Failed to import default list.')
+        } finally {
+            setConfirming(null)
+        }
     }
 
     const handleReset = () => {
@@ -119,13 +138,14 @@ const ImportExportPanel: React.FC<Props> = ({ status, setStatus }) => {
                     <div className="modal-box">
                         <p>This will overwrite your current list. Are you sure?</p>
                         <div className="confirm-actions">
-                            {confirming === 'reset' ? (
+                            {confirming === 'reset' && (
                                 <button className="confirm-yes" onClick={handleReset}>
                                     Yes, reset
                                 </button>
-                            ) : (
-                                <button className="confirm-yes" disabled>
-                                    Yes (not implemented)
+                            )}
+                            {confirming === 'default' && (
+                                <button className="confirm-yes" onClick={handleImportDefault}>
+                                    Yes, import default
                                 </button>
                             )}
                             <button className="confirm-no" onClick={() => setConfirming(null)}>
