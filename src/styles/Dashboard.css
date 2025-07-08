@@ -1,0 +1,18 @@
+.dashboard-container {
+    padding: 12px;
+}
+
+.version-box {
+    font-size: 14px;
+    color: #ccc;
+    background-color: #1f1f1f;
+    padding: 8px 12px;
+    border-radius: 6px;
+    width: fit-content;
+    text-align: left;
+    margin-left: 0;
+}
+
+.version-label {
+    font-weight: bold;
+}

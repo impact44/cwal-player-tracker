@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "CWAL Pro Player Marker",
-  "version": "1.01",
-  "description": "Marks known StarCraft pros on cwal.gg player profiles.",
+  "name": "CWAL.gg Player Tracker",
+  "version": "1.0",
+  "description": "Allows you to track StarCraft accounts on cwal.gg.",
   "permissions": [
     "storage"
   ],
@@ -31,7 +31,7 @@
     }
   ],
   "action": {
-    "default_title": "CWAL Pro Extension",
+    "default_title": "CWAL Player Tracker",
     "default_popup": "index.html"
   }
 }

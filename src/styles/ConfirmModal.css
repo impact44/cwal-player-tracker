@@ -42,14 +42,33 @@
     border-radius: 6px;
     font-size: 14px;
     color: white;
+    cursor: pointer;
 }
 
 .confirm-yes {
     background-color: #a22;
-    cursor: not-allowed;
 }
 
 .confirm-no {
     background-color: #444;
+}
+
+.confirm-yes,
+.confirm-no {
+    flex: 1;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    color: white;
     cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.confirm-yes:hover {
+    background-color: #c33;
+}
+
+.confirm-no:hover {
+    background-color: #666;
 }
