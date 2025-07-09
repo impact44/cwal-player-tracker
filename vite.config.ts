@@ -8,7 +8,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         popup: resolve(__dirname, 'index.html'),
-        privacy: resolve(__dirname, 'public/privacypolicy.html'),
         content: resolve(__dirname, 'src/content-script.tsx'),
       },
       output: {

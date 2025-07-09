@@ -89,7 +89,8 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
     for (const [aka, accounts] of Object.entries(AKA_MAP)) {
       for (const account of accounts) {
         const storedAuroraId = Number(account.aurora_id);
-        if (account.battle_tag === battleTag || storedAuroraId === auroraId) {
+        const storedBattleTag = account.battle_tag;
+        if (storedAuroraId === auroraId && storedBattleTag === battleTag) {
           injectProTag(aka);
           return true;
         }
