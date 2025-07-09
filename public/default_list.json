@@ -5,16 +5,36 @@
       "battle_tag": "배병우"
     }
   ],
+  "AAAA": [
+    {
+      "aurora_id": 1424026379,
+      "battle_tag": "lllllllliii"
+    }
+  ],
   "Absolute": [
     {
       "aurora_id": 702723014,
       "battle_tag": "NaBi"
+    },
+    {
+      "aurora_id": 1416145900,
+      "battle_tag": "Twenty"
     }
   ],
   "Action": [
     {
       "aurora_id": 14812543,
       "battle_tag": "뿌뿌뿡"
+    },
+    {
+      "aurora_id": 1414683591,
+      "battle_tag": "llIIIlllIIl"
+    }
+  ],
+  "Airfou": [
+    {
+      "aurora_id": 702028426,
+      "battle_tag": "마법바지"
     }
   ],
   "Alen": [
@@ -35,6 +55,12 @@
       "battle_tag": "왓다김병쑤"
     }
   ],
+  "BCM": [
+    {
+      "aurora_id": 31109493,
+      "battle_tag": "배창민"
+    }
+  ],
   "BackHo": [
     {
       "aurora_id": 14658252,
@@ -45,6 +71,12 @@
     {
       "aurora_id": 12366304,
       "battle_tag": "암살"
+    }
+  ],
+  "Baskin": [
+    {
+      "aurora_id": 19133571,
+      "battle_tag": "베스킨"
     }
   ],
   "Best": [
@@ -105,6 +137,12 @@
       "battle_tag": "Dewalt"
     }
   ],
+  "Disco": [
+    {
+      "aurora_id": 701966621,
+      "battle_tag": "디스코"
+    }
+  ],
   "Effort": [
     {
       "aurora_id": 18514263,
@@ -141,6 +179,12 @@
       "battle_tag": "취미유저"
     }
   ],
+  "HBQ": [
+    {
+      "aurora_id": 40939014,
+      "battle_tag": "구미호"
+    }
+  ],
   "HiyA": [
     {
       "aurora_id": 13968648,
@@ -153,6 +197,12 @@
       "battle_tag": "인생"
     }
   ],
+  "Hope": [
+    {
+      "aurora_id": 11201773,
+      "battle_tag": "Hope"
+    }
+  ],
   "HyuN": [
     {
       "aurora_id": 18610231,
@@ -163,6 +213,10 @@
     {
       "aurora_id": 13087603,
       "battle_tag": "mizore"
+    },
+    {
+      "aurora_id": 1423135470,
+      "battle_tag": "공허의옻빛전차"
     }
   ],
   "Iffy": [
@@ -235,6 +289,12 @@
     {
       "aurora_id": 14926205,
       "battle_tag": "미친고양이"
+    }
+  ],
+  "Mayd": [
+    {
+      "aurora_id": 13721102,
+      "battle_tag": "홍윽옥"
     }
   ],
   "Midas": [
@@ -345,10 +405,22 @@
       "battle_tag": "김명운"
     }
   ],
+  "Quickly": [
+    {
+      "aurora_id": 1087629,
+      "battle_tag": "와이파이"
+    }
+  ],
   "Rain": [
     {
       "aurora_id": 18372652,
       "battle_tag": "Rain"
+    }
+  ],
+  "Rich": [
+    {
+      "aurora_id": 1423897462,
+      "battle_tag": "근사한바지"
     }
   ],
   "RideSky": [
@@ -489,6 +561,12 @@
       "battle_tag": "송병구"
     }
   ],
+  "Sziky": [
+    {
+      "aurora_id": 416568341,
+      "battle_tag": "HARCSA"
+    }
+  ],
   "Taenggu": [
     {
       "aurora_id": 16239856,
@@ -499,6 +577,12 @@
     {
       "aurora_id": 18607481,
       "battle_tag": "돋크네"
+    }
+  ],
+  "Togles": [
+    {
+      "aurora_id": 12299339,
+      "battle_tag": "경찰"
     }
   ],
   "True": [
@@ -529,6 +613,12 @@
     {
       "aurora_id": 18365366,
       "battle_tag": "윤수철"
+    }
+  ],
+  "Yoon": [
+    {
+      "aurora_id": 1424651593,
+      "battle_tag": "yoon"
     }
   ],
   "ZeLoT": [
