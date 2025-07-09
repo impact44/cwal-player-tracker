@@ -229,6 +229,76 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
     observer.observe(document, { subtree: true, childList: true });
   }
 
+  function injectFloatingButton() {
+    if (document.getElementById("cwal-ext-icon")) return;
+
+    // === Floating Button ===
+    const btn = document.createElement("img");
+    btn.src = chrome.runtime.getURL("icons/icon.png");
+    btn.id = "cwal-ext-icon";
+    btn.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    border: 2px solid white;
+    background-color: #000;
+    z-index: 999999;
+    cursor: pointer;
+  `;
+
+    btn.addEventListener("click", () => {
+      const existing = document.getElementById("cwal-ext-modal");
+      if (existing) {
+        existing.remove();
+        return;
+      }
+
+      // === Transparent Overlay for Outside Click Detection ===
+      const overlay = document.createElement("div");
+      overlay.id = "cwal-ext-modal";
+      overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: transparent;
+      z-index: 999998;
+    `;
+
+      // === Iframe Panel next to Icon (bottom-right) ===
+      const iframe = document.createElement("iframe");
+      iframe.src = chrome.runtime.getURL("index.html");
+      iframe.style.cssText = `
+      position: fixed;
+      bottom: 75px;
+      right: 20px;
+      width: 590px;
+      height: 490px;
+      border: none;
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.6);
+      z-index: 999999;
+    `;
+
+      overlay.appendChild(iframe);
+
+      // Close panel when clicking outside the iframe
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) overlay.remove();
+      });
+
+      document.body.appendChild(overlay);
+    });
+
+    document.body.appendChild(btn);
+  }
+
+
   async function resetAndRerun(): Promise<void> {
     resetSessionState();
     matchObserver?.disconnect(); // Clean up old observer
@@ -315,7 +385,8 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
       resetAndRerun();
     }
   });
-
+  injectFloatingButton();
+  injectFloatingButton();
   patchPushReplaceState();
   observeUrlChange();
 })();

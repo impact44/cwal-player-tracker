@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "CWAL.gg Player Tracker",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "Allows you to track StarCraft accounts on cwal.gg.",
   "permissions": [
     "storage"
@@ -23,7 +23,9 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "icons/edit.png"
+        "icons/edit.png",
+        "icons/icon.png",
+        "index.html"
       ],
       "matches": [
         "https://cwal.gg/*"
