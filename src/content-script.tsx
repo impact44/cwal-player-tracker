@@ -1,7 +1,11 @@
+import browser from 'webextension-polyfill';
 import { SUPABASE_HEADERS } from "./utils/supabase";
 import { injectAkaButtons } from "./utils/inject-buttons";
 import { addAkaToStorage, removeAkaFromStorage, exportAkaList, importAkaList } from "./utils/storage-helpers";
 import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from "./utils/inject-tags";
+
+// Use browser-polyfill for cross-browser storage API
+const storageLocal = browser.storage.local;
 
 
 // Expose functions to the global window object for debugging
@@ -56,12 +60,13 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
     processedOffsets.clear();
   }
 
-  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  browser.runtime.onMessage.addListener((message: any, _sender: any, sendResponse: any) => {
     if (message.type === 'RELOAD_AKA_LIST') {
-      resetAndRerun()
-      sendResponse({ success: true })
+      resetAndRerun();
+      sendResponse({ success: true });
     }
-  })
+    return true;
+  });
 
   async function fetchAuroraId(
     alias: string,
@@ -334,7 +339,7 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
       raw.startsWith("/") && raw.endsWith("/") ? raw.slice(1, -1).trim() : raw;
 
     // 🔁 Always refresh the latest list before injecting anything
-    chrome.storage.local.get("aka_list", (result) => {
+    storageLocal.get("aka_list").then((result: any) => {
       AKA_MAP = result.aka_list ?? {};
 
       tryMatch(cachedBattleTag!, auroraId);
@@ -369,9 +374,9 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
     }
   }
 
-  chrome.storage.local.get("aka_list", (result) => {
+  storageLocal.get("aka_list").then((result: any) => {
     if (!result.aka_list) {
-      console.error("[EXT] ❌ aka_list not found in chrome.storage.local");
+      console.warn("[EXT] ⚠️ aka_list not found in storage.local");
       return;
     }
 
@@ -386,7 +391,6 @@ import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from 
       resetAndRerun();
     }
   });
-  injectFloatingButton();
   injectFloatingButton();
   patchPushReplaceState();
   observeUrlChange();

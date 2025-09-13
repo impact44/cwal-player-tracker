@@ -1,12 +1,9 @@
+import browser from 'webextension-polyfill';
 /**
- * Adds or updates an aka entry in chrome.storage.local under "aka_list"
+ * Adds or updates an aka entry in browser/chrome.storage.local under "aka_list"
  */
-export function addAkaToStorage(
-  aka: string,
-  auroraId: number,
-  battleTag: string
-): void {
-  chrome.storage.local.get("aka_list", (result) => {
+export function addAkaToStorage(aka: string, auroraId: number, battleTag: string): void {
+  browser.storage.local.get("aka_list").then((result: any) => {
     const map = result.aka_list as Record<
       string,
       { aurora_id: number; battle_tag: string }[]
@@ -27,7 +24,7 @@ export function addAkaToStorage(
 
     map[aka].push({ aurora_id: auroraId, battle_tag: battleTag });
 
-    chrome.storage.local.set({ aka_list: map }, () => {
+    browser.storage.local.set({ aka_list: map }).then(() => {
       console.log(
         `[EXT] Added ${aka} → aurora_id: ${auroraId}, battle_tag: ${battleTag}`
       );
@@ -39,7 +36,7 @@ export function addAkaToStorage(
  * Removes an account from aka_list by auroraId
  */
 export function removeAkaFromStorage(auroraId: number): void {
-  chrome.storage.local.get("aka_list", (result) => {
+  browser.storage.local.get("aka_list").then((result: any) => {
     const map = result.aka_list as Record<
       string,
       { aurora_id: number; battle_tag: string }[]
@@ -56,7 +53,7 @@ export function removeAkaFromStorage(auroraId: number): void {
         } else {
           delete map[aka];
         }
-        chrome.storage.local.set({ aka_list: map }, () => {
+        browser.storage.local.set({ aka_list: map }).then(() => {
           console.log(`[EXT] Removed from list: ${aka}, aurora_id: ${auroraId}`);
         });
         break;
@@ -70,13 +67,8 @@ export function removeAkaFromStorage(auroraId: number): void {
 }
 
 export async function exportAkaList(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.get(['aka_list'], (result) => {
-      if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError);
-        return;
-      }
-
+  return new Promise((resolve) => {
+    browser.storage.local.get('aka_list').then((result: any) => {
       const akaList = result.aka_list;
 
       if (!akaList) {
@@ -125,11 +117,7 @@ export async function importAkaList(): Promise<void> {
             throw new Error('Invalid JSON structure');
           }
 
-          chrome.storage.local.set({ aka_list: parsed }, () => {
-            if (chrome.runtime.lastError) {
-              reject(chrome.runtime.lastError);
-              return;
-            }
+          browser.storage.local.set({ aka_list: parsed }).then(() => {
             console.log('[EXT] List imported successfully');
             resolve();
           });

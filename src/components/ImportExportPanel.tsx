@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill';
 import React, { useState } from 'react'
 
 type Props = {
@@ -8,82 +9,85 @@ type Props = {
 const ImportExportPanel: React.FC<Props> = ({ status, setStatus }) => {
     const [confirming, setConfirming] = useState<null | 'default' | 'reset'>(null)
 
+    // Use browser-polyfill for tabs API
     const notifyContentScript = () => {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            const tab = tabs[0]
+        browser.tabs.query({ active: true, currentWindow: true }).then((tabs: any[]) => {
+            const tab = tabs[0];
             if (tab?.id !== undefined && tab.url?.includes("cwal.gg/players")) {
-                chrome.tabs.sendMessage(tab.id, { type: 'RELOAD_AKA_LIST' })
+                browser.tabs.sendMessage(tab.id, { type: 'RELOAD_AKA_LIST' });
             } else {
-                // console.warn("No eligible tab to send RELOAD_AKA_LIST.")
+                // console.warn("No eligible tab to send RELOAD_AKA_LIST.");
             }
-        })
+        });
     }
 
+    const storageLocal = browser.storage.local;
+
     const handleExport = () => {
-        chrome.storage.local.get('aka_list', (result) => {
-            const akaList = result.aka_list || {}
+        storageLocal.get('aka_list').then((result: any) => {
+            const akaList = result.aka_list || {};
             const blob = new Blob([JSON.stringify(akaList, null, 2)], {
                 type: 'application/json',
-            })
-            const url = URL.createObjectURL(blob)
+            });
+            const url = URL.createObjectURL(blob);
 
-            const a = document.createElement('a')
-            a.href = url
-            a.download = 'aka_list.json'
-            a.click()
-            URL.revokeObjectURL(url)
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'aka_list.json';
+            a.click();
+            URL.revokeObjectURL(url);
 
-            setStatus('List exported successfully.')
-            notifyContentScript()
-        })
+            setStatus('List exported successfully.');
+            notifyContentScript();
+        });
     }
 
     const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (!file) return
+        const file = e.target.files?.[0];
+        if (!file) return;
 
-        const reader = new FileReader()
+        const reader = new FileReader();
         reader.onload = (event) => {
             try {
-                const imported = JSON.parse(event.target?.result as string)
+                const imported = JSON.parse(event.target?.result as string);
                 if (typeof imported !== 'object' || Array.isArray(imported))
-                    throw new Error('Invalid format')
+                    throw new Error('Invalid format');
 
-                chrome.storage.local.set({ aka_list: imported }, () => {
-                    setStatus('List imported and saved.')
-                    notifyContentScript()
-                })
+                storageLocal.set({ aka_list: imported }).then(() => {
+                    setStatus('List imported and saved.');
+                    notifyContentScript();
+                });
             } catch (err) {
-                setStatus('Failed to import: invalid file format.')
+                setStatus('Failed to import: invalid file format.');
             }
-        }
+        };
 
-        reader.readAsText(file)
+        reader.readAsText(file);
     }
 
     const handleImportDefault = async () => {
         try {
-            const res = await fetch('/default_list.json')
-            if (!res.ok) throw new Error('Failed to fetch default list')
-            const data = await res.json()
+            const res = await fetch('/default_list.json');
+            if (!res.ok) throw new Error('Failed to fetch default list');
+            const data = await res.json();
 
-            chrome.storage.local.set({ aka_list: data }, () => {
-                setStatus('Default list imported.')
-                notifyContentScript()
-            })
+            storageLocal.set({ aka_list: data }).then(() => {
+                setStatus('Default list imported.');
+                notifyContentScript();
+            });
         } catch (err) {
-            setStatus('Failed to import default list.')
+            setStatus('Failed to import default list.');
         } finally {
-            setConfirming(null)
+            setConfirming(null);
         }
     }
 
     const handleReset = () => {
-        chrome.storage.local.set({ aka_list: {} }, () => {
-            setStatus('List has been reset.')
-            notifyContentScript()
-            setConfirming(null)
-        })
+        storageLocal.set({ aka_list: {} }).then(() => {
+            setStatus('List has been reset.');
+            notifyContentScript();
+            setConfirming(null);
+        });
     }
 
     const renderSection = (title: string, tooltip: string, action: React.ReactNode) => (

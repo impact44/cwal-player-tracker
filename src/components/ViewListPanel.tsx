@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill';
 import { useState, useEffect } from 'react'
 
 const ViewListPanel = () => {
@@ -5,11 +6,11 @@ const ViewListPanel = () => {
     const [aliasCount, setAliasCount] = useState(0)
 
     useEffect(() => {
-        chrome.storage.local.get('aka_list', (result) => {
-            const list = result.aka_list || {}
-            setAkaList(list)
-            setAliasCount(Object.keys(list).length)
-        })
+        browser.storage.local.get('aka_list').then((result: any) => {
+            const list = result.aka_list || {};
+            setAkaList(list);
+            setAliasCount(Object.keys(list).length);
+        });
     }, [])
 
     return (
