@@ -220,7 +220,7 @@ const storageLocal = browser.storage.local;
         // Small delay to ensure DOM is painted
         setTimeout(() => {
           resetAndRerun();
-        }, 100);
+        }, 200);
       }
     });
   }
@@ -376,7 +376,7 @@ const storageLocal = browser.storage.local;
 
   storageLocal.get("aka_list").then((result: any) => {
     if (!result.aka_list) {
-      console.warn("[EXT] ⚠️ aka_list not found in storage.local");
+      console.log("[EXT] ⚠️ aka_list not found in storage.local");
       return;
     }
 
@@ -394,4 +394,13 @@ const storageLocal = browser.storage.local;
   injectFloatingButton();
   patchPushReplaceState();
   observeUrlChange();
+
+  // Listen for browser navigation (back/forward) and refresh injected UI
+  window.addEventListener('popstate', () => {
+    setTimeout(() => {
+      if (typeof resetAndRerun === 'function') {
+        resetAndRerun();
+      }
+    }, 500);
+  });
 })();
