@@ -5,7 +5,8 @@ import { addAkaToStorage, removeAkaFromStorage, exportAkaList, importAkaList } f
 import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from "./utils/inject-tags";
 import {
   initSpoilerMode,
-  applySpoilerModeToVisibleMatches
+  applySpoilerModeToVisibleMatches,
+  revertSpoilerModeFromVisibleMatches
 } from "./utils/spoiler-mode";
 
 
@@ -164,20 +165,33 @@ const storageLocal = browser.storage.local;
   type Settings = { spoilerFree?: boolean };
   let SPOILER_ON = false;
 
-  browser.storage.local.get("settings").then(({ settings }) => {
-    SPOILER_ON = Boolean((settings as Settings)?.spoilerFree);
-  });
-
-  browser.storage.onChanged.addListener((changes, area) => {
-    if (area === "local" && changes.settings) {
-      const next = (changes.settings.newValue ?? {}) as Settings;
-      SPOILER_ON = !!next.spoilerFree;
-    }
-  });
-
   function checkApplySpoiler() {
     if (SPOILER_ON) applySpoilerModeToVisibleMatches();
+    else revertSpoilerModeFromVisibleMatches();
   }
+
+  browser.storage.local.get("settings").then(({ settings }) => {
+    SPOILER_ON = Boolean((settings as Settings)?.spoilerFree);
+    if (SPOILER_ON) applySpoilerModeToVisibleMatches();
+    else revertSpoilerModeFromVisibleMatches();
+  });
+
+  // instant DOM update when the setting changes
+  browser.storage.onChanged.addListener((changes, area) => {
+    if (area !== "local" || !changes.settings) return;
+
+    const next = (changes.settings.newValue ?? {}) as Settings;
+    const prev = (changes.settings.oldValue ?? {}) as Settings;
+
+    const nextOn = !!next.spoilerFree;
+    const prevOn = !!prev.spoilerFree;
+    if (nextOn === prevOn) return; // no change
+
+    SPOILER_ON = nextOn;
+    if (SPOILER_ON) applySpoilerModeToVisibleMatches();
+    else revertSpoilerModeFromVisibleMatches();
+  });
+
 
   function observeMatchHistoryUpdates(
     auroraId: number,
@@ -266,7 +280,7 @@ const storageLocal = browser.storage.local;
 
     // === Floating Button ===
     const btn = document.createElement("img");
-    btn.src = chrome.runtime.getURL("icons/icon.png");
+    btn.src = browser.runtime.getURL("icons/icon.png");
     btn.id = "cwal-ext-icon";
     btn.style.cssText = `
     position: fixed;
@@ -303,7 +317,7 @@ const storageLocal = browser.storage.local;
 
       // === Iframe Panel next to Icon (bottom-right) ===
       const iframe = document.createElement("iframe");
-      iframe.src = chrome.runtime.getURL("index.html");
+      iframe.src = browser.runtime.getURL("index.html");
       iframe.style.cssText = `
       position: fixed;
       bottom: 75px;
