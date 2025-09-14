@@ -3,10 +3,14 @@ import { SUPABASE_HEADERS } from "./utils/supabase";
 import { injectAkaButtons } from "./utils/inject-buttons";
 import { addAkaToStorage, removeAkaFromStorage, exportAkaList, importAkaList } from "./utils/storage-helpers";
 import { injectProTagsInMatchHistory, injectProTag, removeInjectedProTag } from "./utils/inject-tags";
+import {
+  initSpoilerMode,
+  applySpoilerModeToVisibleMatches
+} from "./utils/spoiler-mode";
+
 
 // Use browser-polyfill for cross-browser storage API
 const storageLocal = browser.storage.local;
-
 
 // Expose functions to the global window object for debugging
 (window as any).exportAkaList = exportAkaList;
@@ -24,6 +28,8 @@ const storageLocal = browser.storage.local;
   let lastUrl: string = location.href;
   let matchObserver: MutationObserver | null = null;
   const processedOffsets = new Set<number>();
+
+  initSpoilerMode();
 
   console.debug("Debug to silence error:", {
     alreadyInjected,
@@ -60,12 +66,11 @@ const storageLocal = browser.storage.local;
     processedOffsets.clear();
   }
 
-  browser.runtime.onMessage.addListener((message: any, _sender: any, sendResponse: any) => {
+  browser.runtime.onMessage.addListener((message: any) => {
     if (message.type === 'RELOAD_AKA_LIST') {
       resetAndRerun();
-      sendResponse({ success: true });
+      return { success: true }; // polyfill resolves the sender's promise
     }
-    return true;
   });
 
   async function fetchAuroraId(
@@ -156,6 +161,24 @@ const storageLocal = browser.storage.local;
     observer.observe(container, { childList: true, subtree: true });
   }
 
+  type Settings = { spoilerFree?: boolean };
+  let SPOILER_ON = false;
+
+  browser.storage.local.get("settings").then(({ settings }) => {
+    SPOILER_ON = Boolean((settings as Settings)?.spoilerFree);
+  });
+
+  browser.storage.onChanged.addListener((changes, area) => {
+    if (area === "local" && changes.settings) {
+      const next = (changes.settings.newValue ?? {}) as Settings;
+      SPOILER_ON = !!next.spoilerFree;
+    }
+  });
+
+  function checkApplySpoiler() {
+    if (SPOILER_ON) applySpoilerModeToVisibleMatches();
+  }
+
   function observeMatchHistoryUpdates(
     auroraId: number,
     gateway: string,
@@ -190,6 +213,9 @@ const storageLocal = browser.storage.local;
           AKA_MAP!,
           SUPABASE_HEADERS
         );
+
+        // Check and apply spoiler mode if enabled
+        checkApplySpoiler();
       }, 100)
     );
 
@@ -286,7 +312,7 @@ const storageLocal = browser.storage.local;
       height: 490px;
       border: none;
       border-radius: 10px;
-      background: white;
+      background: transparent;
       box-shadow: 0 0 14px rgba(0, 0, 0, 0.6);
       z-index: 999999;
     `;
@@ -355,6 +381,8 @@ const storageLocal = browser.storage.local;
         SUPABASE_HEADERS
       );
       observeMatchHistoryUpdates(auroraId, gateway, alias);
+
+      checkApplySpoiler();
     });
 
     if (!alreadyInjected && cachedBattleTag) {
@@ -372,6 +400,9 @@ const storageLocal = browser.storage.local;
         }
       );
     }
+
+    // Always re-apply spoiler mode at the end
+    checkApplySpoiler();
   }
 
   storageLocal.get("aka_list").then((result: any) => {
