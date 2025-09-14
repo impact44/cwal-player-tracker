@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "CWAL.gg Player Tracker",
-  "version": "1.0.4",
-  "description": "Allows you to track StarCraft accounts on cwal.gg.",
+  "version": "1.1.0",
+  "description": "Allows you to easily keep track of StarCraft players on cwal.gg using a custom alias list.",
   "permissions": [
     "storage"
   ],
