@@ -91,8 +91,8 @@ const ImportExportPanel: React.FC<Props> = ({ status, setStatus }) => {
         storageLocal.set({ aka_list: {} }).then(() => {
             setStatus('List has been reset.');
             notifyContentScript();
-            setConfirming(null);
         });
+        setConfirming(null);
     }
 
     const renderSection = (title: string, tooltip: string, action: React.ReactNode) => (
