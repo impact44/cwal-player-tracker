@@ -1,20 +1,21 @@
 import { useState } from 'react'
 import ImportExportPanel from './components/ImportExportPanel'
 import ViewListPanel from './components/ViewListPanel'
-import DashboardPanel from './components/DashboardPanel'
+import SettingsPanel from './components/SettingsPanel'
+import AboutPanel from './components/AboutPanel'
 import { FaGithub, FaDiscord } from 'react-icons/fa'
 import './styles/App.css'
 import './styles/ConfirmModal.css'
 import './styles/ViewList.css'
-import './styles/Dashboard.css'
+import './styles/About.css'
 
 const SECTIONS = [
-  { label: 'General', items: ['Dashboard', 'Help'] },
+  { label: 'General', items: ['About', 'Settings'] },
   { label: 'Manage List', items: ['Import/Export List', 'View List', 'Remove Player'] }
 ]
 
 function App() {
-  const [active, setActive] = useState('Dashboard')
+  const [active, setActive] = useState('About')
   const [status, setStatus] = useState<string | null>(null)
 
   const handleMenuChange = (menu: string) => {
@@ -62,19 +63,15 @@ function App() {
             <ImportExportPanel status={status} setStatus={setStatus} />
           )}
 
-          {active === 'Dashboard' && <DashboardPanel />}
+          {active === 'About' && <AboutPanel />}
 
-          {active === 'Help' && (
-            <p style={{ fontSize: '14px', color: '#aaa' }}>
-              Help section coming soon!
-            </p>
-          )}
+          {active === 'Settings' && <SettingsPanel onSaved={() => setStatus(null)} />}
 
           {active === 'View List' && <ViewListPanel />}
 
           {active === 'Remove Player' && (
             <p style={{ fontSize: '14px', color: '#aaa' }}>
-              Remove Player coming soon! For now, you can remove players by navigating to their corresponding profile on cwal.gg
+              Remove Player coming soon! For now, you can remove players by navigating to their corresponding profile on cwal.gg.
             </p>
           )}
         </div>
