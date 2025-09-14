@@ -8,6 +8,7 @@ type Props = {
 
 const ImportExportPanel: React.FC<Props> = ({ status, setStatus }) => {
     const [confirming, setConfirming] = useState<null | 'default' | 'reset'>(null)
+    const [showEmptyExportModal, setShowEmptyExportModal] = useState(false);
 
     // Use browser-polyfill for tabs API
     const notifyContentScript = () => {
@@ -26,6 +27,10 @@ const ImportExportPanel: React.FC<Props> = ({ status, setStatus }) => {
     const handleExport = () => {
         storageLocal.get('aka_list').then((result: any) => {
             const akaList = result.aka_list || {};
+            if (!akaList || Object.keys(akaList).length === 0) {
+                setShowEmptyExportModal(true);
+                return;
+            }
             const blob = new Blob([JSON.stringify(akaList, null, 2)], {
                 type: 'application/json',
             });
@@ -154,6 +159,19 @@ const ImportExportPanel: React.FC<Props> = ({ status, setStatus }) => {
                             )}
                             <button className="confirm-no" onClick={() => setConfirming(null)}>
                                 Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showEmptyExportModal && (
+                <div className="modal-overlay">
+                    <div className="modal-box">
+                        <p>Your list is empty, nothing to export.</p>
+                        <div className="confirm-actions">
+                            <button className="confirm-no" onClick={() => setShowEmptyExportModal(false)}>
+                                OK
                             </button>
                         </div>
                     </div>
