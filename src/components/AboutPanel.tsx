@@ -18,6 +18,7 @@ const AboutPanel: React.FC = () => {
                 <ul style={{ margin: 0, paddingLeft: 18 }}>
                     <li>Spoiler-Free Browsing toggle in Settings</li>
                     <li>Firefox/Brave Support</li>
+                    <li>Default list updated</li>
                     <li>Bug fixes</li>
                 </ul>
             </div>
