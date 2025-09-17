@@ -3,6 +3,24 @@
   "name": "CWAL.gg Player Tracker",
   "version": "1.1.0",
   "description": "Allows you to easily keep track of StarCraft players on cwal.gg using a custom alias list.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "cwal-player-tracker@impact44.dev",
+      "strict_min_version": "109.0"
+    }
+  },
+  "icons": {
+    "32": "icons/icon32.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "CWAL Player Tracker",
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
   "permissions": [
     "storage"
   ],
@@ -23,17 +41,13 @@
   "web_accessible_resources": [
     {
       "resources": [
+        "icons/icon128.png",
         "icons/edit.png",
-        "icons/icon.png",
         "index.html"
       ],
       "matches": [
         "https://cwal.gg/*"
       ]
     }
-  ],
-  "action": {
-    "default_title": "CWAL Player Tracker",
-    "default_popup": "index.html"
-  }
+  ]
 }

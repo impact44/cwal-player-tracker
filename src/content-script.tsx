@@ -280,7 +280,7 @@ const storageLocal = browser.storage.local;
 
     // === Floating Button ===
     const btn = document.createElement("img");
-    btn.src = browser.runtime.getURL("icons/icon.png");
+    btn.src = browser.runtime.getURL("icons/icon128.png");
     btn.id = "cwal-ext-icon";
     btn.style.cssText = `
     position: fixed;
