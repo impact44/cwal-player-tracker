@@ -49,6 +49,12 @@
       "battle_tag": "뇌없냐태영아"
     }
   ],
+  "Artosis": [
+    {
+      "aurora_id": 850218,
+      "battle_tag": "Artosis"
+    }
+  ],
   "Artuser": [
     {
       "aurora_id": 11160854,
@@ -59,6 +65,12 @@
     {
       "aurora_id": 31109493,
       "battle_tag": "배창민"
+    }
+  ],
+  "BTS": [
+    {
+      "aurora_id": 14099535,
+      "battle_tag": "llllIllIIlI"
     }
   ],
   "BackHo": [
@@ -99,6 +111,26 @@
     {
       "aurora_id": 1409696313,
       "battle_tag": "lIlIlIlIIIll"
+    },
+    {
+      "aurora_id": 778296319,
+      "battle_tag": "김택용"
+    }
+  ],
+  "Blade": [
+    {
+      "aurora_id": 24020369,
+      "battle_tag": "llllllllllll"
+    },
+    {
+      "aurora_id": 18875340,
+      "battle_tag": "구구콘"
+    }
+  ],
+  "BliSs": [
+    {
+      "aurora_id": 15132094,
+      "battle_tag": "허유진"
     }
   ],
   "Bonyth": [
@@ -113,6 +145,22 @@
       "battle_tag": "창백한녹청위습"
     }
   ],
+  "Brori": [
+    {
+      "aurora_id": 716478223,
+      "battle_tag": "llllllllllll"
+    }
+  ],
+  "Byul": [
+    {
+      "aurora_id": 11020815,
+      "battle_tag": "llllllllll"
+    },
+    {
+      "aurora_id": 786567149,
+      "battle_tag": "llll"
+    }
+  ],
   "Calm": [
     {
       "aurora_id": 34921618,
@@ -125,10 +173,22 @@
       "battle_tag": "노재상"
     }
   ],
+  "Core": [
+    {
+      "aurora_id": 20837884,
+      "battle_tag": "대전왕따"
+    }
+  ],
   "DDasik": [
     {
       "aurora_id": 803688773,
       "battle_tag": "KyleKatarn20"
+    }
+  ],
+  "Ddasik": [
+    {
+      "aurora_id": 35208657,
+      "battle_tag": "치킨소주"
     }
   ],
   "Dewalt": [
@@ -179,10 +239,26 @@
       "battle_tag": "취미유저"
     }
   ],
+  "Freyja": [
+    {
+      "aurora_id": 702573234,
+      "battle_tag": "수샘쓰"
+    }
+  ],
+  "Gunwook": [
+    {
+      "aurora_id": 41016813,
+      "battle_tag": "SongBale"
+    }
+  ],
   "HBQ": [
     {
       "aurora_id": 40939014,
       "battle_tag": "구미호"
+    },
+    {
+      "aurora_id": 20009496,
+      "battle_tag": "chipslan"
     }
   ],
   "HiyA": [
@@ -291,6 +367,12 @@
       "battle_tag": "미친고양이"
     }
   ],
+  "MansaeGi": [
+    {
+      "aurora_id": 13940404,
+      "battle_tag": "만새기"
+    }
+  ],
   "Mayd": [
     {
       "aurora_id": 13721102,
@@ -369,6 +451,18 @@
       "battle_tag": "Noel"
     }
   ],
+  "Noob13": [
+    {
+      "aurora_id": 701954393,
+      "battle_tag": "kakao"
+    }
+  ],
+  "Olympus": [
+    {
+      "aurora_id": 1594206,
+      "battle_tag": "박재현"
+    }
+  ],
   "Paralyze": [
     {
       "aurora_id": 18374885,
@@ -421,6 +515,10 @@
     {
       "aurora_id": 1423897462,
       "battle_tag": "근사한바지"
+    },
+    {
+      "aurora_id": 1400599318,
+      "battle_tag": "llIIIlllIIIl"
     }
   ],
   "RideSky": [
@@ -463,6 +561,16 @@
     {
       "aurora_id": 41376348,
       "battle_tag": "유승곤"
+    },
+    {
+      "aurora_id": 468995821,
+      "battle_tag": "Saturn"
+    }
+  ],
+  "Scene/Judge": [
+    {
+      "aurora_id": 23762169,
+      "battle_tag": "Scene"
     }
   ],
   "Sea": [
@@ -561,6 +669,12 @@
       "battle_tag": "송병구"
     }
   ],
+  "Stryker": [
+    {
+      "aurora_id": 2264640,
+      "battle_tag": "StRyKeR17"
+    }
+  ],
   "Sziky": [
     {
       "aurora_id": 416568341,
@@ -579,16 +693,16 @@
       "battle_tag": "돋크네"
     }
   ],
+  "TimeisGold": [
+    {
+      "aurora_id": 15346760,
+      "battle_tag": "겁먹은햇병아리"
+    }
+  ],
   "Togles": [
     {
       "aurora_id": 12299339,
       "battle_tag": "경찰"
-    }
-  ],
-  "True": [
-    {
-      "aurora_id": 14099535,
-      "battle_tag": "llllIllIIlI"
     }
   ],
   "Tyson": [
@@ -627,6 +741,12 @@
       "battle_tag": "서문지훈"
     }
   ],
+  "flash": [
+    {
+      "aurora_id": 18505773,
+      "battle_tag": "flash"
+    }
+  ],
   "ggaemo": [
     {
       "aurora_id": 14751269,
@@ -639,6 +759,12 @@
       "battle_tag": "조일장"
     }
   ],
+  "kimSangSoo": [
+    {
+      "aurora_id": 20409285,
+      "battle_tag": "widowmaker"
+    }
+  ],
   "nOOB": [
     {
       "aurora_id": 12357306,
@@ -649,6 +775,12 @@
     {
       "aurora_id": 18372656,
       "battle_tag": "바코드"
+    }
+  ],
+  "shinee": [
+    {
+      "aurora_id": 1466133644,
+      "battle_tag": "ilililiiiili"
     }
   ],
   "xiaoshuai": [
