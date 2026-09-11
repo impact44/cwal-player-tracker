@@ -1,54 +1,52 @@
-# React + TypeScript + Vite
+# CWAL.gg Player Tracker — Source & Reproducible Build
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This archive contains the **source code** used to build the Firefox add-on published on AMO.
 
-Currently, two official plugins are available:
+## 1) Build environment
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- OS: macOS 13+/14+, Ubuntu 22.04+, or Windows 10/11
+- Node.js: **20.x LTS** (18.x LTS also works)
+- npm: **10+**
+- Tools:
+  - macOS/Linux: `zip`
+  - Windows: PowerShell 5+ (`Compress-Archive`)
+- No network keys or secrets required. All tools are open source.
 
-## Expanding the ESLint configuration
+## 2) Tooling
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Vite** (Rollup + esbuild) — bundling & minification
+- **TypeScript** — TS → JS transpilation
+- (If present) **PostCSS/Tailwind** — CSS processing
+- **webextension-polyfill** — browser API wrapper
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## 3) Reproducible build steps
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+> The commands below produce `dist/` and then package an uploadable `extension.zip` where `manifest.json` is at the **zip root**.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### macOS / Linux
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+# From the project root (this folder)
+node -v   # should show 18/20 LTS
+npm -v
+
+# Clean previous outputs (optional)
+rm -rf dist extension.zip
+
+# Install exact dependency versions from the lockfile
+npm ci
+
+# Build
+# If package.json already defines "build", use it:
+npm run build
+
+# If not, run the two Vite builds explicitly:
+# npx vite build --config vite.content.config.ts
+# npx vite build --config vite.popup.config.ts
+
+# Package: zip the **contents** of dist (manifest.json at zip root)
+( cd dist && zip -r ../extension.zip . )
+
+# The file to upload as the add-on package:
+#   extension.zip
 ```

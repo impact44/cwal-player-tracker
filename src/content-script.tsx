@@ -65,12 +65,16 @@ const storageLocal = browser.storage.local;
     cachedBattleTag = null;
     alreadyInjected = false;
     processedOffsets.clear();
+    appliedHideThisPage = false;
   }
 
   browser.runtime.onMessage.addListener((message: any) => {
     if (message.type === 'RELOAD_AKA_LIST') {
       resetAndRerun();
       return { success: true }; // polyfill resolves the sender's promise
+    }
+    if (message.type === 'APPLY_HIDE_SHORT_GAMES_ONCE') {
+      applyHideShortGamesOnce();
     }
   });
 
@@ -162,8 +166,12 @@ const storageLocal = browser.storage.local;
     observer.observe(container, { childList: true, subtree: true });
   }
 
-  type Settings = { spoilerFree?: boolean };
+  type Settings = { spoilerFree?: boolean; hideShortGames?: boolean };
   let SPOILER_ON = false;
+
+  let HIDE_SHORT_GAMES = false;
+  let appliedHideThisPage = false; // auto-applies once per page
+
 
   function checkApplySpoiler() {
     if (SPOILER_ON) applySpoilerModeToVisibleMatches();
@@ -171,7 +179,10 @@ const storageLocal = browser.storage.local;
   }
 
   browser.storage.local.get("settings").then(({ settings }) => {
-    SPOILER_ON = Boolean((settings as Settings)?.spoilerFree);
+    const s = (settings as Settings) ?? {};
+    SPOILER_ON = !!s.spoilerFree;
+    HIDE_SHORT_GAMES = !!s.hideShortGames;
+
     if (SPOILER_ON) applySpoilerModeToVisibleMatches();
     else revertSpoilerModeFromVisibleMatches();
   });
@@ -183,13 +194,17 @@ const storageLocal = browser.storage.local;
     const next = (changes.settings.newValue ?? {}) as Settings;
     const prev = (changes.settings.oldValue ?? {}) as Settings;
 
-    const nextOn = !!next.spoilerFree;
-    const prevOn = !!prev.spoilerFree;
-    if (nextOn === prevOn) return; // no change
+    // Spoiler flag
+    const nextSpoiler = !!next.spoilerFree;
+    const prevSpoiler = !!prev.spoilerFree;
+    if (nextSpoiler !== prevSpoiler) {
+      SPOILER_ON = nextSpoiler;
+      if (SPOILER_ON) applySpoilerModeToVisibleMatches();
+      else revertSpoilerModeFromVisibleMatches();
+    }
 
-    SPOILER_ON = nextOn;
-    if (SPOILER_ON) applySpoilerModeToVisibleMatches();
-    else revertSpoilerModeFromVisibleMatches();
+    // Hide-short-games flag (no early return — we want this even if spoiler didn't change)
+    HIDE_SHORT_GAMES = !!next.hideShortGames;
   });
 
 
@@ -228,12 +243,33 @@ const storageLocal = browser.storage.local;
           SUPABASE_HEADERS
         );
 
-        // Check and apply spoiler mode if enabled
+        // Check and apply settings
         checkApplySpoiler();
+        applyHideShortGamesOnce();
+
       }, 100)
     );
 
     matchObserver.observe(container, { childList: true, subtree: true });
+  }
+
+  // ---- Hide <60s games: apply once per page ----
+  async function applyHideShortGamesOnce() {
+    if (!HIDE_SHORT_GAMES || appliedHideThisPage) return;
+
+    const input = document.querySelector(
+      'label[data-tip*="Hide games under 60 seconds"] input.toggle[type="checkbox"]'
+    ) as HTMLInputElement | null;
+
+    if (!input) return;
+
+    if (!input.checked) {
+      input.checked = true;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    appliedHideThisPage = true;
   }
 
   function patchPushReplaceState(): void {
@@ -417,6 +453,7 @@ const storageLocal = browser.storage.local;
 
     // Always re-apply spoiler mode at the end
     checkApplySpoiler();
+    applyHideShortGamesOnce();
   }
 
   storageLocal.get("aka_list").then((result: any) => {

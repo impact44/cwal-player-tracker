@@ -16,9 +16,7 @@ const AboutPanel: React.FC = () => {
             <div style={{ marginBottom: 32 }}>
                 <div style={{ fontWeight: 'bold', fontSize: 16, textTransform: 'uppercase', letterSpacing: 1, borderBottom: '2px solid #444', marginBottom: 6 }}>What's New?</div>
                 <ul style={{ margin: 0, paddingLeft: 18 }}>
-                    <li>Spoiler-Free Browsing toggle in Settings</li>
-                    <li>Firefox/Brave Support</li>
-                    <li>Default list updated</li>
+                    <li>Added option to always hide dodged games in Settings</li>
                     <li>Bug fixes</li>
                 </ul>
             </div>
